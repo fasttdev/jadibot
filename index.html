@@ -109,7 +109,6 @@ img,video{ display:block; max-width:100%; }
 h1,h2,h3,h4,p{ margin:0; }
 ::selection{ background:rgba(139,92,246,.42); color:#fff; }
 
-/* Scrollbar */
 ::-webkit-scrollbar{ width:6px; height:6px; }
 ::-webkit-scrollbar-track{ background:transparent; }
 ::-webkit-scrollbar-thumb{
@@ -339,7 +338,7 @@ h1,h2,h3,h4,p{ margin:0; }
 }
 
 /* ============================================================
-   VIEWS
+   MAIN & VIEWS
    ============================================================ */
 .main{
   flex:1;
@@ -354,6 +353,79 @@ h1,h2,h3,h4,p{ margin:0; }
 @keyframes viewIn{
   from{ opacity:0; transform:translateY(14px) scale(.985); }
   to{ opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* ============================================================
+   PROTOCOL WARNING BANNER
+   ============================================================ */
+.mixed-banner{
+  display:none;
+  margin:0 0 14px;
+  padding:14px 16px;
+  border-radius:var(--r-md);
+  background:
+    linear-gradient(150deg, rgba(251,191,36,.14), rgba(251,113,133,.10));
+  border:1px solid rgba(251,191,36,.36);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 12px 26px -12px rgba(0,0,0,.9);
+  position:relative;
+  overflow:hidden;
+}
+.mixed-banner.show{ display:block; animation:viewIn .36s var(--ease) both; }
+.mixed-banner .mb-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+}
+.mixed-banner .mb-head .ico{
+  width:32px;height:32px;
+  flex:0 0 32px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  font-size:13px;
+  color:#2a1400;
+  background:linear-gradient(150deg,#fcd34d,#f59e0b);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.45),
+    inset 0 -4px 9px rgba(0,0,0,.35);
+}
+.mixed-banner .mb-head h4{
+  font-size:12.5px;
+  font-weight:800;
+  letter-spacing:.3px;
+  color:var(--amber);
+  text-transform:uppercase;
+}
+.mixed-banner p{
+  font-size:11.5px;
+  font-weight:500;
+  line-height:1.65;
+  color:var(--txt-2);
+  letter-spacing:.2px;
+}
+.mixed-banner p b{ color:var(--txt-1); font-weight:700; }
+.mixed-banner code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  color:var(--amber);
+  background:rgba(251,191,36,.14);
+  padding:2px 6px;
+  border-radius:6px;
+}
+.mixed-banner .mb-actions{
+  display:flex;
+  gap:8px;
+  margin-top:11px;
+}
+.mixed-banner .mb-actions .btn{
+  flex:1;
+  padding:11px 12px;
+  font-size:11.5px;
+  border-radius:var(--r-sm);
+  width:auto;
 }
 
 /* ============================================================
@@ -850,11 +922,6 @@ h1,h2,h3,h4,p{ margin:0; }
   border-color:rgba(251,113,133,.26);
   background:rgba(251,113,133,.06);
 }
-.result .k{ color:var(--violet-soft); }
-.result .s{ color:var(--ok); }
-.result .e{ color:var(--danger); }
-.result .n{ color:var(--amber); }
-.result .b{ color:var(--cyan); }
 
 /* ============================================================
    MEDIA PREVIEW
@@ -1287,6 +1354,27 @@ h1,h2,h3,h4,p{ margin:0; }
          VIEW : JADIBOT
          ============================================================ -->
     <section class="view active" id="view-jadibot">
+
+      <div class="mixed-banner" id="mixedBanner">
+        <div class="mb-head">
+          <div class="ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <h4>Mixed Content Terdeteksi</h4>
+        </div>
+        <p>
+          Halaman ini jalan di <b>HTTPS</b>, tapi API lu di <b>HTTP</b>.
+          Browser bakal blok semua request. Solusi:
+          aktifin <b>Proxy Mode</b> di pengaturan, atau buka halaman ini via
+          <code>http://</code> / <code>file://</code>.
+        </p>
+        <div class="mb-actions">
+          <button class="btn btn-amber btn-sm" id="bannerProxyBtn" type="button">
+            <i class="fa-solid fa-route"></i> Atur Proxy
+          </button>
+          <button class="btn btn-ghost btn-sm" id="bannerDismissBtn" type="button">
+            <i class="fa-solid fa-xmark"></i> Abaikan
+          </button>
+        </div>
+      </div>
 
       <div class="segments" id="jbSegments" role="tablist">
         <button class="seg active" data-seg="sesi" role="tab">
@@ -1772,6 +1860,24 @@ h1,h2,h3,h4,p{ margin:0; }
   <div class="divider"></div>
 
   <div class="sheet-section">
+    <label class="label" for="cfgProxy">
+      <i class="fa-solid fa-route"></i> Proxy URL (Opsional)
+    </label>
+    <input class="input" id="cfgProxy" type="url" spellcheck="false" autocomplete="off" placeholder="https://proxy-lu.dev/?url=" />
+    <div class="hint">
+      Wajib diisi kalau halaman ini dibuka via HTTPS tapi API di HTTP.
+      Format: <code>https://domain-proxy/?url=</code> — URL target bakal di-encode dan ditempel di belakang.
+    </div>
+    <div class="pill-row">
+      <button class="pill" type="button" id="pillProxyCors">corsproxy.io</button>
+      <button class="pill" type="button" id="pillProxyAll">allorigins</button>
+      <button class="pill" type="button" id="pillProxyClear">Kosongkan</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sheet-section">
     <label class="label">
       <i class="fa-solid fa-heart-pulse"></i> Server
     </label>
@@ -1803,14 +1909,17 @@ h1,h2,h3,h4,p{ margin:0; }
   /* ============================================================
      KONFIGURASI DASAR
      ============================================================ */
-  const DEFAULT_BASE = 'http://lunaris-node-free-8.hostkita.help:20016';
-  const DEFAULT_KEY  = 'jadibot-insomniaxd-2024-secret';
+  const DEFAULT_BASE  = 'http://lunaris-node-free-8.hostkita.help:20016';
+  const DEFAULT_KEY   = 'jadibot-insomniaxd-2024-secret';
+  const DEFAULT_PROXY = '';
 
-  const LS_BASE = 'insomniaxd.base';
-  const LS_KEY  = 'insomniaxd.key';
+  const LS_BASE  = 'insomniaxd.base';
+  const LS_KEY   = 'insomniaxd.key';
+  const LS_PROXY = 'insomniaxd.proxy';
 
-  let BASE_URL = localStorage.getItem(LS_BASE) || DEFAULT_BASE;
-  let API_KEY  = localStorage.getItem(LS_KEY)  || DEFAULT_KEY;
+  let BASE_URL  = localStorage.getItem(LS_BASE)  || DEFAULT_BASE;
+  let API_KEY   = localStorage.getItem(LS_KEY)   || DEFAULT_KEY;
+  let PROXY_URL = localStorage.getItem(LS_PROXY) || DEFAULT_PROXY;
 
   /* ============================================================
      HELPERS
@@ -1862,7 +1971,7 @@ h1,h2,h3,h4,p{ margin:0; }
     setTimeout(() => {
       node.classList.add('out');
       setTimeout(() => node.remove(), 320);
-    }, 2600);
+    }, 2800);
   }
 
   /* ============================================================
@@ -1901,7 +2010,33 @@ h1,h2,h3,h4,p{ margin:0; }
   function hidePreview(node) { if (node) node.classList.remove('show'); }
 
   /* ============================================================
-     API LAYER
+     PROTOCOL / MIXED CONTENT DETECTION
+     ============================================================ */
+  function isHttps() {
+    return location.protocol === 'https:';
+  }
+
+  function isApiHttp() {
+    return /^http:\/\//i.test(BASE_URL);
+  }
+
+  function isMixedContent() {
+    return isHttps() && isApiHttp();
+  }
+
+  const mixedBanner = $('#mixedBanner');
+
+  function refreshMixedBanner() {
+    if (!mixedBanner) return;
+    if (isMixedContent() && !PROXY_URL) {
+      mixedBanner.classList.add('show');
+    } else {
+      mixedBanner.classList.remove('show');
+    }
+  }
+
+  /* ============================================================
+     API LAYER (DENGAN PROXY FALLBACK)
      ============================================================ */
   function authHeaders(extra) {
     const h = {
@@ -1918,9 +2053,53 @@ h1,h2,h3,h4,p{ margin:0; }
     return base + p;
   }
 
+  function applyProxy(url) {
+    if (!PROXY_URL) return url;
+    const p = PROXY_URL.trim();
+    // Support beberapa format proxy:
+    // 1. https://proxy.dev/?url=    -> concat + encodeURIComponent
+    // 2. https://proxy.dev/{url}    -> replace {url}
+    if (p.includes('{url}')) {
+      return p.replace('{url}', encodeURIComponent(url));
+    }
+    return p + encodeURIComponent(url);
+  }
+
+  function resolveFinalUrl(path) {
+    const url = buildUrl(path);
+
+    // Blokir di HTTPS kalau API HTTP + tidak ada proxy
+    if (isMixedContent() && !PROXY_URL) {
+      const err = new Error('MIXED_CONTENT');
+      err.code = 'MIXED_CONTENT';
+      throw err;
+    }
+
+    if (isMixedContent() && PROXY_URL) {
+      return applyProxy(url);
+    }
+
+    // Kalau tidak mixed tapi ada proxy, tetap pakai proxy (user opt-in)
+    if (PROXY_URL && PROXY_URL.trim() !== '') {
+      return applyProxy(url);
+    }
+
+    return url;
+  }
+
   async function apiRequest(path, options) {
     const opts = options || {};
-    const url = buildUrl(path);
+
+    let finalUrl;
+    try {
+      finalUrl = resolveFinalUrl(path);
+    } catch (e) {
+      if (e.code === 'MIXED_CONTENT') {
+        refreshMixedBanner();
+        throw new Error('Mixed content: buka via HTTP/file:// atau aktifkan Proxy Mode di pengaturan.');
+      }
+      throw e;
+    }
 
     const init = {
       method: opts.method || 'GET',
@@ -1935,9 +2114,17 @@ h1,h2,h3,h4,p{ margin:0; }
 
     let res;
     try {
-      res = await fetch(url, init);
+      res = await fetch(finalUrl, init);
     } catch (netErr) {
-      throw new Error('NETWORK: ' + (netErr && netErr.message ? netErr.message : 'gagal terhubung'));
+      const msg = netErr && netErr.message ? netErr.message : 'gagal terhubung';
+      if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+        if (isMixedContent()) {
+          refreshMixedBanner();
+          throw new Error('Request diblokir browser (mixed content). Aktifkan Proxy Mode.');
+        }
+        throw new Error('Network error: ' + msg + ' — cek base URL / CORS server.');
+      }
+      throw new Error('NETWORK: ' + msg);
     }
 
     const raw = await res.text();
@@ -1963,7 +2150,17 @@ h1,h2,h3,h4,p{ margin:0; }
 
   async function apiRequestBinary(path, options) {
     const opts = options || {};
-    const url = buildUrl(path);
+
+    let finalUrl;
+    try {
+      finalUrl = resolveFinalUrl(path);
+    } catch (e) {
+      if (e.code === 'MIXED_CONTENT') {
+        refreshMixedBanner();
+        throw new Error('Mixed content: buka via HTTP/file:// atau aktifkan Proxy Mode di pengaturan.');
+      }
+      throw e;
+    }
 
     const init = {
       method: opts.method || 'GET',
@@ -1978,9 +2175,17 @@ h1,h2,h3,h4,p{ margin:0; }
 
     let res;
     try {
-      res = await fetch(url, init);
+      res = await fetch(finalUrl, init);
     } catch (netErr) {
-      throw new Error('NETWORK: ' + (netErr && netErr.message ? netErr.message : 'gagal terhubung'));
+      const msg = netErr && netErr.message ? netErr.message : 'gagal terhubung';
+      if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+        if (isMixedContent()) {
+          refreshMixedBanner();
+          throw new Error('Request diblokir browser (mixed content). Aktifkan Proxy Mode.');
+        }
+        throw new Error('Network error: ' + msg);
+      }
+      throw new Error('NETWORK: ' + msg);
     }
 
     const ct = (res.headers.get('content-type') || '').toLowerCase();
@@ -2038,7 +2243,7 @@ h1,h2,h3,h4,p{ margin:0; }
   healthPill.addEventListener('click', async () => {
     const res = await checkHealth();
     if (res.ok) toast('Server online', 'ok');
-    else toast('Server tidak merespon', 'err');
+    else toast(res.error && res.error.message ? res.error.message : 'Server tidak merespon', 'err');
   });
 
   /* ============================================================
@@ -2712,15 +2917,20 @@ h1,h2,h3,h4,p{ margin:0; }
   const closeSettingsBtn = $('#closeSettings');
   const cfgBase = $('#cfgBase');
   const cfgKey = $('#cfgKey');
+  const cfgProxy = $('#cfgProxy');
   const toggleKeyBtn = $('#toggleKey');
   const btnSaveCfg = $('#btnSaveCfg');
   const btnResetCfg = $('#btnResetCfg');
   const btnTestConn = $('#btnTestConn');
   const testResult = $('#testResult');
 
+  const bannerProxyBtn = $('#bannerProxyBtn');
+  const bannerDismissBtn = $('#bannerDismissBtn');
+
   function openSheet() {
     cfgBase.value = BASE_URL;
     cfgKey.value = API_KEY;
+    cfgProxy.value = PROXY_URL;
     cfgKey.type = 'password';
     toggleKeyBtn.querySelector('i').className = 'fa-solid fa-eye';
     hideResult(testResult);
@@ -2739,6 +2949,15 @@ h1,h2,h3,h4,p{ margin:0; }
   closeSettingsBtn.addEventListener('click', closeSheet);
   sheetBackdrop.addEventListener('click', closeSheet);
 
+  if (bannerProxyBtn) {
+    bannerProxyBtn.addEventListener('click', openSheet);
+  }
+  if (bannerDismissBtn) {
+    bannerDismissBtn.addEventListener('click', () => {
+      mixedBanner.classList.remove('show');
+    });
+  }
+
   toggleKeyBtn.addEventListener('click', () => {
     const isPass = cfgKey.type === 'password';
     cfgKey.type = isPass ? 'text' : 'password';
@@ -2747,9 +2966,34 @@ h1,h2,h3,h4,p{ margin:0; }
       : 'fa-solid fa-eye';
   });
 
+  /* ---- Proxy presets ---- */
+  const pillProxyCors = $('#pillProxyCors');
+  const pillProxyAll = $('#pillProxyAll');
+  const pillProxyClear = $('#pillProxyClear');
+
+  if (pillProxyCors) {
+    pillProxyCors.addEventListener('click', () => {
+      cfgProxy.value = 'https://corsproxy.io/?url=';
+      toast('Preset corsproxy.io dipasang', 'info');
+    });
+  }
+  if (pillProxyAll) {
+    pillProxyAll.addEventListener('click', () => {
+      cfgProxy.value = 'https://api.allorigins.win/raw?url=';
+      toast('Preset allorigins dipasang', 'info');
+    });
+  }
+  if (pillProxyClear) {
+    pillProxyClear.addEventListener('click', () => {
+      cfgProxy.value = '';
+      toast('Proxy dikosongkan', 'info');
+    });
+  }
+
   btnSaveCfg.addEventListener('click', () => {
     const newBase = cfgBase.value.trim().replace(/\/+$/, '');
     const newKey = cfgKey.value.trim();
+    const newProxy = cfgProxy.value.trim();
 
     if (!newBase || !newKey) {
       toast('Base URL dan API Key wajib diisi', 'err');
@@ -2758,12 +3002,15 @@ h1,h2,h3,h4,p{ margin:0; }
 
     BASE_URL = newBase;
     API_KEY = newKey;
+    PROXY_URL = newProxy;
 
     localStorage.setItem(LS_BASE, BASE_URL);
     localStorage.setItem(LS_KEY, API_KEY);
+    localStorage.setItem(LS_PROXY, PROXY_URL);
 
     toast('Konfigurasi tersimpan', 'ok');
     closeSheet();
+    refreshMixedBanner();
     checkHealth();
     loadSessions(true);
   });
@@ -2771,11 +3018,18 @@ h1,h2,h3,h4,p{ margin:0; }
   btnResetCfg.addEventListener('click', () => {
     BASE_URL = DEFAULT_BASE;
     API_KEY = DEFAULT_KEY;
+    PROXY_URL = DEFAULT_PROXY;
+
     localStorage.setItem(LS_BASE, BASE_URL);
     localStorage.setItem(LS_KEY, API_KEY);
+    localStorage.setItem(LS_PROXY, PROXY_URL);
+
     cfgBase.value = BASE_URL;
     cfgKey.value = API_KEY;
+    cfgProxy.value = PROXY_URL;
+
     toast('Konfigurasi direset', 'info');
+    refreshMixedBanner();
     checkHealth();
   });
 
@@ -2785,9 +3039,30 @@ h1,h2,h3,h4,p{ margin:0; }
 
     const tmpBase = cfgBase.value.trim().replace(/\/+$/, '') || BASE_URL;
     const tmpKey = cfgKey.value.trim() || API_KEY;
+    const tmpProxy = cfgProxy.value.trim();
+
+    let targetUrl = tmpBase + '/api/public/health';
+
+    const isHttpsPage = location.protocol === 'https:';
+    const isHttpTarget = /^http:\/\//i.test(tmpBase);
+
+    if (isHttpsPage && isHttpTarget && !tmpProxy) {
+      showResult(testResult, 'Mixed content: halaman HTTPS tidak bisa akses API HTTP. Isi Proxy URL dulu.', 'err');
+      toast('Butuh proxy untuk HTTPS', 'err');
+      setLoading(btnTestConn, false);
+      return;
+    }
+
+    if (tmpProxy) {
+      if (tmpProxy.includes('{url}')) {
+        targetUrl = tmpProxy.replace('{url}', encodeURIComponent(targetUrl));
+      } else {
+        targetUrl = tmpProxy + encodeURIComponent(targetUrl);
+      }
+    }
 
     try {
-      const res = await fetch(tmpBase + '/api/public/health', {
+      const res = await fetch(targetUrl, {
         method: 'GET',
         headers: {
           'x-api-key': tmpKey,
@@ -2810,7 +3085,7 @@ h1,h2,h3,h4,p{ margin:0; }
         toast('Koneksi gagal', 'err');
       }
     } catch (err) {
-      showResult(testResult, err.message || 'Gagal terhubung', 'err');
+      showResult(testResult, (err.message || 'Gagal terhubung'), 'err');
       toast('Koneksi gagal', 'err');
     } finally {
       setLoading(btnTestConn, false);
@@ -2830,20 +3105,21 @@ h1,h2,h3,h4,p{ margin:0; }
      INIT
      ============================================================ */
   async function init() {
+    refreshMixedBanner();
+
+    if (isMixedContent() && !PROXY_URL) {
+      toast('HTTPS + API HTTP: aktifkan proxy', 'err');
+    }
+
     const health = await checkHealth(true);
 
     if (health.ok) {
       toast('Terhubung ke node', 'ok');
-    } else {
+    } else if (!isMixedContent() || PROXY_URL) {
       toast('Node tidak merespon', 'err');
     }
 
-    await loadSessions(true);
-
-    // Prefill default dari sesi pertama bila ada
-    const items = normalizeSessions(
-      await apiRequest('/api/public/sessions').catch(() => null)
-    );
+    const items = await loadSessions(true);
 
     if (items.length) {
       const first = String(pickSessionPhone(items[0]));
@@ -2854,7 +3130,6 @@ h1,h2,h3,h4,p{ margin:0; }
       $('#qrPhone').value = first;
     }
 
-    // Health polling ringan
     setInterval(() => {
       if (document.visibilityState === 'visible') {
         checkHealth(true);
