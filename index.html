@@ -1,0 +1,2872 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#050506" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>INSOMNIAXD — Jadibot Control Deck</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   INSOMNIAXD — DESIGN TOKENS
+   Claymorphism x Glassmorphism — Pure Black Base
+   ============================================================ */
+:root{
+  --bg-0:#000000;
+  --bg-1:#050507;
+  --bg-2:#0a0a10;
+
+  --glass-1:rgba(255,255,255,.038);
+  --glass-2:rgba(255,255,255,.065);
+  --glass-3:rgba(255,255,255,.10);
+
+  --stroke-1:rgba(255,255,255,.075);
+  --stroke-2:rgba(255,255,255,.13);
+  --stroke-3:rgba(255,255,255,.20);
+
+  --txt-1:#f4f5f9;
+  --txt-2:#a7aab8;
+  --txt-3:#6b6e7e;
+
+  --violet:#8b5cf6;
+  --violet-soft:#a78bfa;
+  --cyan:#22d3ee;
+  --pink:#f472b6;
+  --lime:#a3e635;
+  --amber:#fbbf24;
+  --danger:#fb7185;
+  --ok:#34d399;
+
+  --clay-lg:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 -10px 22px rgba(0,0,0,.62),
+    0 24px 48px -18px rgba(0,0,0,.92);
+  --clay-md:
+    inset 0 1px 0 rgba(255,255,255,.11),
+    inset 0 -7px 16px rgba(0,0,0,.55),
+    0 16px 32px -14px rgba(0,0,0,.88);
+  --clay-sm:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 -4px 10px rgba(0,0,0,.50),
+    0 10px 22px -10px rgba(0,0,0,.85);
+  --clay-inset:
+    inset 0 2px 6px rgba(0,0,0,.75),
+    inset 0 -1px 0 rgba(255,255,255,.06);
+
+  --r-xl:34px;
+  --r-lg:28px;
+  --r-md:20px;
+  --r-sm:14px;
+  --r-xs:10px;
+
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  --topbar-h:78px;
+  --toolbar-h:84px;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*,*::before,*::after{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+html,body{height:100%;}
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  font-family:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg-0);
+  color:var(--txt-1);
+  overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  min-height:100dvh;
+  position:relative;
+  overflow-x:hidden;
+}
+button,input,select,textarea{
+  font-family:inherit;
+  color:inherit;
+  border:none;
+  outline:none;
+  background:none;
+}
+button{ cursor:pointer; }
+a{ color:inherit; text-decoration:none; }
+img,video{ display:block; max-width:100%; }
+h1,h2,h3,h4,p{ margin:0; }
+::selection{ background:rgba(139,92,246,.42); color:#fff; }
+
+/* Scrollbar */
+::-webkit-scrollbar{ width:6px; height:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.14);
+  border-radius:99px;
+}
+::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.24); }
+
+/* ============================================================
+   AURORA BACKGROUND ORNAMENTS
+   ============================================================ */
+.aurora{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(139,92,246,.10) 0%, transparent 55%),
+    radial-gradient(90% 60% at 100% 100%, rgba(34,211,238,.07) 0%, transparent 60%),
+    linear-gradient(180deg,#030304 0%,#000000 45%,#050507 100%);
+}
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(72px);
+  opacity:.55;
+  will-change:transform;
+}
+.orb-violet{
+  width:290px;height:290px;
+  top:-90px;left:-70px;
+  background:radial-gradient(circle at 30% 30%, rgba(139,92,246,.85), rgba(139,92,246,0) 70%);
+  animation:float1 18s ease-in-out infinite;
+}
+.orb-cyan{
+  width:240px;height:240px;
+  top:34%;right:-110px;
+  background:radial-gradient(circle at 40% 40%, rgba(34,211,238,.80), rgba(34,211,238,0) 70%);
+  animation:float2 22s ease-in-out infinite;
+}
+.orb-pink{
+  width:260px;height:260px;
+  bottom:-110px;left:-80px;
+  background:radial-gradient(circle at 50% 50%, rgba(244,114,182,.70), rgba(244,114,182,0) 70%);
+  animation:float3 26s ease-in-out infinite;
+}
+.orb-amber{
+  width:170px;height:170px;
+  top:12%;right:18%;
+  opacity:.30;
+  background:radial-gradient(circle at 50% 50%, rgba(251,191,36,.80), rgba(251,191,36,0) 70%);
+  animation:float2 20s ease-in-out infinite reverse;
+}
+@keyframes float1{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); }
+  50%{ transform:translate3d(40px,60px,0) scale(1.14); }
+}
+@keyframes float2{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); }
+  50%{ transform:translate3d(-46px,-40px,0) scale(1.10); }
+}
+@keyframes float3{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); }
+  50%{ transform:translate3d(30px,-70px,0) scale(1.18); }
+}
+.grain{
+  position:absolute;
+  inset:0;
+  opacity:.14;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.55'/></svg>");
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app{
+  position:relative;
+  z-index:1;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  padding-top:calc(var(--safe-top) + var(--topbar-h));
+  padding-bottom:calc(var(--safe-bot) + var(--toolbar-h) + 18px);
+}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:60;
+  padding:calc(var(--safe-top) + 14px) 16px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:linear-gradient(180deg, rgba(5,5,7,.92) 0%, rgba(5,5,7,.55) 62%, rgba(5,5,7,0) 100%);
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+.brand-mark{
+  width:44px;height:44px;
+  flex:0 0 44px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  font-size:17px;
+  color:#fff;
+  background:
+    linear-gradient(150deg, rgba(139,92,246,.95), rgba(34,211,238,.65));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -6px 12px rgba(0,0,0,.42),
+    0 12px 26px -8px rgba(139,92,246,.85);
+  position:relative;
+  overflow:hidden;
+}
+.brand-mark::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(160deg, rgba(255,255,255,.34), transparent 52%);
+  opacity:.75;
+}
+.brand-mark i{ position:relative; z-index:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+.brand-text{ min-width:0; }
+.brand-text h1{
+  font-size:16.5px;
+  font-weight:900;
+  letter-spacing:.9px;
+  line-height:1.1;
+  background:linear-gradient(92deg,#ffffff 0%,#d8d5f5 42%,#8ee7f5 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  white-space:nowrap;
+}
+.brand-text h1 span{
+  background:linear-gradient(92deg,var(--violet-soft),var(--cyan));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.brand-text p{
+  font-size:9.5px;
+  font-weight:500;
+  letter-spacing:2.1px;
+  text-transform:uppercase;
+  color:var(--txt-3);
+  margin-top:3px;
+  white-space:nowrap;
+}
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+.status-pill{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 12px;
+  border-radius:99px;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+  color:var(--txt-2);
+  background:var(--glass-1);
+  border:1px solid var(--stroke-1);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:var(--clay-sm);
+  transition:all .3s var(--ease);
+}
+.status-pill .dot{
+  width:7px;height:7px;
+  border-radius:50%;
+  background:var(--txt-3);
+  box-shadow:0 0 0 0 rgba(0,0,0,0);
+  transition:all .35s var(--ease);
+}
+.status-pill.is-online{ color:var(--ok); border-color:rgba(52,211,153,.30); }
+.status-pill.is-online .dot{
+  background:var(--ok);
+  box-shadow:0 0 10px 1px rgba(52,211,153,.9);
+  animation:pulseOk 2s infinite;
+}
+.status-pill.is-offline{ color:var(--danger); border-color:rgba(251,113,133,.30); }
+.status-pill.is-offline .dot{
+  background:var(--danger);
+  box-shadow:0 0 10px 1px rgba(251,113,133,.9);
+}
+@keyframes pulseOk{
+  0%,100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:.5; transform:scale(.78); }
+}
+.icon-btn{
+  width:44px;height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  font-size:15px;
+  color:var(--txt-1);
+  background:var(--glass-2);
+  border:1px solid var(--stroke-1);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  box-shadow:var(--clay-sm);
+  transition:transform .22s var(--ease-back), background .22s var(--ease), box-shadow .22s var(--ease);
+}
+.icon-btn:active{
+  transform:scale(.90);
+  background:var(--glass-3);
+  box-shadow:var(--clay-inset);
+}
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+.main{
+  flex:1;
+  padding:8px 14px 0;
+  position:relative;
+}
+.view{
+  display:none;
+  animation:viewIn .42s var(--ease) both;
+}
+.view.active{ display:block; }
+@keyframes viewIn{
+  from{ opacity:0; transform:translateY(14px) scale(.985); }
+  to{ opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* ============================================================
+   SEGMENT CONTROL (inside Jadibot)
+   ============================================================ */
+.segments{
+  display:flex;
+  gap:6px;
+  padding:6px;
+  margin-bottom:16px;
+  border-radius:22px;
+  background:var(--glass-1);
+  border:1px solid var(--stroke-1);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--clay-md);
+  overflow-x:auto;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.segments::-webkit-scrollbar{ display:none; }
+.seg{
+  flex:1 0 auto;
+  min-width:76px;
+  padding:11px 14px;
+  border-radius:16px;
+  font-size:12.5px;
+  font-weight:700;
+  letter-spacing:.25px;
+  color:var(--txt-3);
+  background:transparent;
+  border:1px solid transparent;
+  transition:all .28s var(--ease);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  white-space:nowrap;
+}
+.seg i{ font-size:12px; }
+.seg:active{ transform:scale(.95); }
+.seg.active{
+  color:#fff;
+  background:linear-gradient(150deg, rgba(139,92,246,.30), rgba(34,211,238,.14));
+  border-color:rgba(167,139,250,.36);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -5px 12px rgba(0,0,0,.42),
+    0 10px 24px -8px rgba(139,92,246,.85);
+}
+.seg-panel{ display:none; animation:panelIn .34s var(--ease) both; }
+.seg-panel.active{ display:block; }
+@keyframes panelIn{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card{
+  position:relative;
+  border-radius:var(--r-lg);
+  padding:18px;
+  margin-bottom:14px;
+  background:
+    linear-gradient(158deg, rgba(255,255,255,.075) 0%, rgba(255,255,255,.022) 46%, rgba(255,255,255,.045) 100%);
+  border:1px solid var(--stroke-1);
+  backdrop-filter:blur(26px) saturate(155%);
+  -webkit-backdrop-filter:blur(26px) saturate(155%);
+  box-shadow:var(--clay-lg);
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.34), transparent);
+  opacity:.75;
+}
+.card::after{
+  content:'';
+  position:absolute;
+  width:150px;height:150px;
+  top:-72px;right:-62px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,.30), transparent 68%);
+  filter:blur(18px);
+  pointer-events:none;
+}
+.card.accent-cyan::after{
+  background:radial-gradient(circle, rgba(34,211,238,.28), transparent 68%);
+}
+.card.accent-pink::after{
+  background:radial-gradient(circle, rgba(244,114,182,.26), transparent 68%);
+}
+.card.accent-amber::after{
+  background:radial-gradient(circle, rgba(251,191,36,.24), transparent 68%);
+}
+.card.accent-lime::after{
+  background:radial-gradient(circle, rgba(163,230,53,.22), transparent 68%);
+}
+
+.card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:15px;
+  position:relative;
+  z-index:1;
+}
+.card-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.card-title .ico{
+  width:34px;height:34px;
+  flex:0 0 34px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  font-size:13px;
+  color:#fff;
+  background:linear-gradient(150deg, rgba(139,92,246,.62), rgba(139,92,246,.20));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -4px 9px rgba(0,0,0,.42),
+    0 8px 18px -8px rgba(139,92,246,.9);
+}
+.card.accent-cyan .ico{ background:linear-gradient(150deg, rgba(34,211,238,.62), rgba(34,211,238,.18)); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -4px 9px rgba(0,0,0,.42), 0 8px 18px -8px rgba(34,211,238,.9); }
+.card.accent-pink .ico{ background:linear-gradient(150deg, rgba(244,114,182,.62), rgba(244,114,182,.18)); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -4px 9px rgba(0,0,0,.42), 0 8px 18px -8px rgba(244,114,182,.9); }
+.card.accent-amber .ico{ background:linear-gradient(150deg, rgba(251,191,36,.62), rgba(251,191,36,.18)); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -4px 9px rgba(0,0,0,.42), 0 8px 18px -8px rgba(251,191,36,.9); }
+.card.accent-lime .ico{ background:linear-gradient(150deg, rgba(163,230,53,.62), rgba(163,230,53,.18)); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -4px 9px rgba(0,0,0,.42), 0 8px 18px -8px rgba(163,230,53,.9); }
+
+.card-title h3{
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.15px;
+  color:var(--txt-1);
+  line-height:1.2;
+}
+.card-title p{
+  font-size:10.5px;
+  font-weight:500;
+  color:var(--txt-3);
+  margin-top:2px;
+  letter-spacing:.3px;
+}
+.card-body{ position:relative; z-index:1; }
+
+/* ============================================================
+   FORM FIELDS
+   ============================================================ */
+.field{ margin-bottom:12px; }
+.field:last-child{ margin-bottom:0; }
+.label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:1.1px;
+  text-transform:uppercase;
+  color:var(--txt-3);
+  margin-bottom:7px;
+  padding-left:3px;
+}
+.label i{ font-size:9.5px; color:var(--violet-soft); }
+
+.input,
+.select,
+.textarea{
+  width:100%;
+  padding:14px 16px;
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--txt-1);
+  background:rgba(0,0,0,.42);
+  border:1px solid var(--stroke-1);
+  border-radius:var(--r-md);
+  box-shadow:var(--clay-inset);
+  transition:border-color .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+  -webkit-appearance:none;
+  appearance:none;
+}
+.input::placeholder,
+.textarea::placeholder{ color:var(--txt-3); font-weight:400; }
+.input:focus,
+.select:focus,
+.textarea:focus{
+  border-color:rgba(139,92,246,.55);
+  background:rgba(0,0,0,.55);
+  box-shadow:
+    var(--clay-inset),
+    0 0 0 3px rgba(139,92,246,.16);
+}
+.textarea{
+  resize:vertical;
+  min-height:96px;
+  line-height:1.55;
+  font-family:inherit;
+}
+.select{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6e7e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 16px center;
+  padding-right:42px;
+}
+.select option{
+  background:#0b0b11;
+  color:var(--txt-1);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  width:100%;
+  padding:15px 20px;
+  font-size:13.5px;
+  font-weight:800;
+  letter-spacing:.35px;
+  color:#fff;
+  border-radius:var(--r-md);
+  background:linear-gradient(158deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
+  border:1px solid var(--stroke-2);
+  box-shadow:var(--clay-md);
+  transition:transform .2s var(--ease-back), box-shadow .2s var(--ease), background .25s var(--ease);
+  overflow:hidden;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.btn::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(158deg, rgba(255,255,255,.26), transparent 48%);
+  opacity:.55;
+  pointer-events:none;
+}
+.btn > *{ position:relative; z-index:1; }
+.btn:active{
+  transform:scale(.965);
+  box-shadow:var(--clay-inset);
+}
+.btn:disabled{
+  opacity:.45;
+  pointer-events:none;
+  filter:grayscale(.5);
+}
+.btn-primary{
+  background:linear-gradient(150deg, #9b6bff 0%, #7c3aed 48%, #5b21b6 100%);
+  border-color:rgba(196,181,253,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -7px 16px rgba(0,0,0,.42),
+    0 18px 38px -12px rgba(124,58,237,.95);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);
+}
+.btn-cyan{
+  background:linear-gradient(150deg, #38e0f5 0%, #06b6d4 48%, #0e7490 100%);
+  border-color:rgba(165,243,252,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -7px 16px rgba(0,0,0,.42),
+    0 18px 38px -12px rgba(6,182,212,.95);
+  color:#00181d;
+  text-shadow:none;
+}
+.btn-pink{
+  background:linear-gradient(150deg, #f9a8d4 0%, #ec4899 48%, #9d174d 100%);
+  border-color:rgba(251,207,232,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -7px 16px rgba(0,0,0,.42),
+    0 18px 38px -12px rgba(236,72,153,.95);
+}
+.btn-amber{
+  background:linear-gradient(150deg, #fcd34d 0%, #f59e0b 48%, #b45309 100%);
+  border-color:rgba(253,230,138,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -7px 16px rgba(0,0,0,.42),
+    0 18px 38px -12px rgba(245,158,11,.95);
+  color:#2a1400;
+  text-shadow:none;
+}
+.btn-lime{
+  background:linear-gradient(150deg, #bef264 0%, #84cc16 48%, #3f6212 100%);
+  border-color:rgba(217,249,157,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 -7px 16px rgba(0,0,0,.42),
+    0 18px 38px -12px rgba(132,204,22,.95);
+  color:#12210a;
+  text-shadow:none;
+}
+.btn-ghost{
+  background:var(--glass-1);
+  border-color:var(--stroke-1);
+  color:var(--txt-2);
+  box-shadow:var(--clay-sm);
+  font-weight:700;
+}
+.btn-sm{
+  padding:11px 16px;
+  font-size:12px;
+  border-radius:var(--r-sm);
+  width:auto;
+}
+.btn-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:4px;
+}
+.btn-row .btn{ width:100%; }
+
+.btn-loading .btn-label{ opacity:0; }
+.btn-loading::before{
+  content:'';
+  position:absolute;
+  width:18px;height:18px;
+  border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.28);
+  border-top-color:#fff;
+  animation:spin .7s linear infinite;
+  z-index:2;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ============================================================
+   SESSION LIST
+   ============================================================ */
+.session-list{ display:flex; flex-direction:column; gap:10px; }
+.session-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 14px;
+  border-radius:var(--r-md);
+  background:var(--glass-1);
+  border:1px solid var(--stroke-1);
+  box-shadow:var(--clay-sm);
+  transition:transform .22s var(--ease-back), border-color .22s var(--ease), background .22s var(--ease);
+  cursor:pointer;
+}
+.session-item:active{
+  transform:scale(.978);
+  background:var(--glass-2);
+  border-color:var(--stroke-2);
+}
+.session-avatar{
+  width:42px;height:42px;
+  flex:0 0 42px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  font-size:16px;
+  color:#fff;
+  background:linear-gradient(150deg, rgba(52,211,153,.60), rgba(52,211,153,.16));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -4px 9px rgba(0,0,0,.42);
+}
+.session-info{ flex:1; min-width:0; }
+.session-phone{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  font-weight:700;
+  color:var(--txt-1);
+  letter-spacing:.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.session-meta{
+  font-size:10.5px;
+  font-weight:500;
+  color:var(--txt-3);
+  margin-top:3px;
+  letter-spacing:.3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.badge{
+  flex:0 0 auto;
+  padding:5px 10px;
+  border-radius:99px;
+  font-size:9.5px;
+  font-weight:800;
+  letter-spacing:.9px;
+  text-transform:uppercase;
+  border:1px solid transparent;
+  white-space:nowrap;
+}
+.badge-ok{
+  color:var(--ok);
+  background:rgba(52,211,153,.11);
+  border-color:rgba(52,211,153,.32);
+}
+.badge-off{
+  color:var(--txt-3);
+  background:rgba(255,255,255,.05);
+  border-color:var(--stroke-1);
+}
+.badge-warn{
+  color:var(--amber);
+  background:rgba(251,191,36,.10);
+  border-color:rgba(251,191,36,.30);
+}
+
+/* ============================================================
+   EMPTY / SKELETON STATES
+   ============================================================ */
+.empty{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:30px 16px;
+  text-align:center;
+}
+.empty i{
+  font-size:28px;
+  color:var(--txt-3);
+  opacity:.55;
+}
+.empty p{
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--txt-3);
+  letter-spacing:.3px;
+}
+.empty small{
+  font-size:10.5px;
+  color:var(--txt-3);
+  opacity:.7;
+  font-weight:400;
+}
+.skeleton{
+  height:62px;
+  border-radius:var(--r-md);
+  background:linear-gradient(100deg, rgba(255,255,255,.04) 20%, rgba(255,255,255,.09) 40%, rgba(255,255,255,.04) 60%);
+  background-size:220% 100%;
+  animation:shimmer 1.5s infinite linear;
+}
+@keyframes shimmer{
+  from{ background-position:180% 0; }
+  to{ background-position:-80% 0; }
+}
+
+/* ============================================================
+   RESULT / OUTPUT BOX
+   ============================================================ */
+.result{
+  margin-top:12px;
+  padding:14px;
+  border-radius:var(--r-md);
+  background:rgba(0,0,0,.46);
+  border:1px solid var(--stroke-1);
+  box-shadow:var(--clay-inset);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;
+  line-height:1.7;
+  color:var(--txt-2);
+  word-break:break-word;
+  white-space:pre-wrap;
+  max-height:280px;
+  overflow:auto;
+  display:none;
+}
+.result.show{ display:block; animation:panelIn .3s var(--ease) both; }
+.result.is-ok{
+  color:#a7f3d0;
+  border-color:rgba(52,211,153,.26);
+  background:rgba(52,211,153,.06);
+}
+.result.is-err{
+  color:#fecdd3;
+  border-color:rgba(251,113,133,.26);
+  background:rgba(251,113,133,.06);
+}
+.result .k{ color:var(--violet-soft); }
+.result .s{ color:var(--ok); }
+.result .e{ color:var(--danger); }
+.result .n{ color:var(--amber); }
+.result .b{ color:var(--cyan); }
+
+/* ============================================================
+   MEDIA PREVIEW
+   ============================================================ */
+.preview{
+  display:none;
+  margin-top:12px;
+  padding:14px;
+  border-radius:var(--r-md);
+  background:rgba(0,0,0,.46);
+  border:1px solid var(--stroke-1);
+  box-shadow:var(--clay-inset);
+  text-align:center;
+}
+.preview.show{ display:block; animation:panelIn .3s var(--ease) both; }
+.preview img,
+.preview video{
+  max-width:100%;
+  max-height:320px;
+  margin:0 auto;
+  border-radius:var(--r-sm);
+  box-shadow:0 14px 32px -12px rgba(0,0,0,.9);
+}
+.preview .preview-actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.preview .preview-actions .btn{ flex:1; }
+
+/* ============================================================
+   COMING SOON VIEW
+   ============================================================ */
+.soon-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:56vh;
+  padding:24px 12px;
+  text-align:center;
+  gap:18px;
+}
+.soon-orb{
+  width:118px;height:118px;
+  display:grid;
+  place-items:center;
+  border-radius:38px;
+  font-size:42px;
+  color:#fff;
+  background:
+    linear-gradient(150deg, rgba(139,92,246,.55), rgba(34,211,238,.22));
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.34),
+    inset 0 -12px 24px rgba(0,0,0,.55),
+    0 30px 60px -18px rgba(139,92,246,.85);
+  position:relative;
+  animation:floatOrb 5s ease-in-out infinite;
+}
+@keyframes floatOrb{
+  0%,100%{ transform:translateY(0) rotate(-2deg); }
+  50%{ transform:translateY(-14px) rotate(2deg); }
+}
+.soon-orb::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(160deg, rgba(255,255,255,.36), transparent 50%);
+  opacity:.6;
+  pointer-events:none;
+}
+.soon-orb i{ position:relative; z-index:1; filter:drop-shadow(0 3px 8px rgba(0,0,0,.55)); }
+.soon-wrap h2{
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.4px;
+  background:linear-gradient(96deg,#ffffff,#b9b3f0 50%,#7fe3f2 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.soon-wrap p{
+  font-size:12.5px;
+  font-weight:500;
+  line-height:1.7;
+  color:var(--txt-3);
+  max-width:290px;
+  letter-spacing:.25px;
+}
+.soon-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 18px;
+  border-radius:99px;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:1.8px;
+  text-transform:uppercase;
+  color:var(--violet-soft);
+  background:rgba(139,92,246,.10);
+  border:1px solid rgba(139,92,246,.30);
+  box-shadow:var(--clay-sm);
+}
+.soon-tag i{ font-size:9px; animation:spin 3.4s linear infinite; }
+
+/* ============================================================
+   BOTTOM TOOLBAR
+   ============================================================ */
+.toolbar{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:70;
+  padding:10px 14px calc(var(--safe-bot) + 12px);
+  display:flex;
+  align-items:stretch;
+  gap:4px;
+  background:linear-gradient(180deg, rgba(5,5,7,0) 0%, rgba(5,5,7,.72) 34%, rgba(5,5,7,.96) 100%);
+  backdrop-filter:blur(26px) saturate(170%);
+  -webkit-backdrop-filter:blur(26px) saturate(170%);
+  border-top:1px solid rgba(255,255,255,.055);
+}
+.tool{
+  flex:1;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:9px 4px 8px;
+  border-radius:var(--r-md);
+  color:var(--txt-3);
+  background:transparent;
+  border:1px solid transparent;
+  transition:all .3s var(--ease);
+  min-width:0;
+}
+.tool i{
+  font-size:16px;
+  transition:transform .32s var(--ease-back), color .3s var(--ease), filter .3s var(--ease);
+}
+.tool span{
+  font-size:9.5px;
+  font-weight:800;
+  letter-spacing:.75px;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
+  transition:color .3s var(--ease);
+}
+.tool:active{ transform:scale(.94); }
+.tool.active{
+  color:#fff;
+  background:linear-gradient(158deg, rgba(139,92,246,.26), rgba(34,211,238,.10));
+  border-color:rgba(167,139,250,.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -5px 12px rgba(0,0,0,.45),
+    0 12px 26px -10px rgba(139,92,246,.92);
+}
+.tool.active i{
+  transform:translateY(-1px) scale(1.12);
+  color:#fff;
+  filter:drop-shadow(0 0 8px rgba(167,139,250,.95));
+}
+.tool.active span{ color:#fff; }
+.tool .soon-dot{
+  position:absolute;
+  top:8px;right:calc(50% - 17px);
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 8px 1px rgba(251,191,36,.9);
+}
+
+/* ============================================================
+   BOTTOM SHEET (SETTINGS)
+   ============================================================ */
+.sheet-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .34s var(--ease);
+}
+.sheet-backdrop.open{ opacity:1; pointer-events:auto; }
+.sheet{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  z-index:100;
+  max-height:88dvh;
+  overflow-y:auto;
+  padding:10px 16px calc(var(--safe-bot) + 22px);
+  border-radius:32px 32px 0 0;
+  background:
+    linear-gradient(180deg, rgba(18,18,26,.98) 0%, rgba(7,7,11,.99) 100%);
+  border-top:1px solid rgba(255,255,255,.11);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 -28px 70px rgba(0,0,0,.95);
+  transform:translateY(104%);
+  transition:transform .46s var(--ease-back);
+}
+.sheet.open{ transform:translateY(0); }
+.sheet-grip{
+  width:44px;height:5px;
+  border-radius:99px;
+  background:rgba(255,255,255,.18);
+  margin:6px auto 18px;
+}
+.sheet-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+.sheet-head h3{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.2px;
+}
+.sheet-head .icon-btn{
+  width:38px;height:38px;
+  border-radius:13px;
+  font-size:14px;
+}
+.sheet-section{
+  margin-bottom:18px;
+}
+.sheet-section .label{ margin-bottom:9px; }
+.hint{
+  font-size:10.5px;
+  font-weight:500;
+  color:var(--txt-3);
+  line-height:1.65;
+  margin-top:8px;
+  padding-left:3px;
+  letter-spacing:.2px;
+}
+.hint code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--violet-soft);
+  background:rgba(139,92,246,.12);
+  padding:2px 6px;
+  border-radius:6px;
+}
+.sheet-actions{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+.sheet-actions .btn{ flex:1; }
+.input-group{
+  position:relative;
+}
+.input-group .input{ padding-right:52px; }
+.input-group .eye{
+  position:absolute;
+  top:50%;right:8px;
+  transform:translateY(-50%);
+  width:38px;height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  font-size:13px;
+  color:var(--txt-3);
+  background:var(--glass-1);
+  border:1px solid var(--stroke-1);
+  transition:all .24s var(--ease);
+}
+.input-group .eye:active{
+  transform:translateY(-50%) scale(.9);
+  color:var(--violet-soft);
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast-stack{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:calc(var(--safe-bot) + var(--toolbar-h) + 16px);
+  z-index:120;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:center;
+  pointer-events:none;
+  width:calc(100% - 40px);
+  max-width:400px;
+}
+.toast{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 18px;
+  border-radius:16px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.2px;
+  color:var(--txt-1);
+  background:rgba(16,16,22,.96);
+  border:1px solid var(--stroke-2);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    0 18px 38px -12px rgba(0,0,0,.95);
+  animation:toastIn .38s var(--ease-back) both;
+  max-width:100%;
+}
+.toast.out{ animation:toastOut .3s var(--ease) forwards; }
+.toast i{ font-size:13px; flex:0 0 auto; }
+.toast.ok{ border-color:rgba(52,211,153,.34); }
+.toast.ok i{ color:var(--ok); }
+.toast.err{ border-color:rgba(251,113,133,.34); }
+.toast.err i{ color:var(--danger); }
+.toast.info i{ color:var(--cyan); }
+@keyframes toastIn{
+  from{ opacity:0; transform:translateY(18px) scale(.9); }
+  to{ opacity:1; transform:translateY(0) scale(1); }
+}
+@keyframes toastOut{
+  to{ opacity:0; transform:translateY(-10px) scale(.94); }
+}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.divider{
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+  margin:16px 0;
+}
+.pill-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:10px;
+}
+.pill{
+  padding:7px 13px;
+  border-radius:99px;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.4px;
+  color:var(--txt-2);
+  background:var(--glass-1);
+  border:1px solid var(--stroke-1);
+  box-shadow:var(--clay-sm);
+  transition:all .24s var(--ease);
+}
+.pill:active{
+  transform:scale(.93);
+  color:#fff;
+  background:rgba(139,92,246,.20);
+  border-color:rgba(139,92,246,.42);
+}
+.mono{ font-family:'JetBrains Mono',monospace; }
+.text-dim{ color:var(--txt-3); }
+.mt-8{ margin-top:8px; }
+.mt-12{ margin-top:12px; }
+.hidden{ display:none !important; }
+
+/* ============================================================
+   RESPONSIVE TWEAKS
+   ============================================================ */
+@media (min-width:520px){
+  .main{ max-width:520px; margin:0 auto; width:100%; }
+  .topbar{ padding-left:calc(50% - 246px); padding-right:calc(50% - 246px); }
+  .toolbar{ padding-left:calc(50% - 246px); padding-right:calc(50% - 246px); }
+}
+@media (max-width:360px){
+  .seg{ min-width:66px; padding:10px 10px; font-size:11.5px; }
+  .tool span{ font-size:8.5px; }
+  .card{ padding:15px; border-radius:24px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================ BACKGROUND ============================ -->
+<div class="aurora" aria-hidden="true">
+  <span class="orb orb-violet"></span>
+  <span class="orb orb-cyan"></span>
+  <span class="orb orb-pink"></span>
+  <span class="orb orb-amber"></span>
+  <div class="grain"></div>
+</div>
+
+<!-- ============================ APP ============================ -->
+<div class="app">
+
+  <!-- ------------------------ TOP BAR ------------------------ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><i class="fa-solid fa-bolt"></i></div>
+      <div class="brand-text">
+        <h1>INSOMNIA<span>XD</span></h1>
+        <p>Jadibot Control Deck</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="status-pill" id="healthPill" type="button" aria-label="Server status">
+        <span class="dot"></span>
+        <span id="healthText">CHECK</span>
+      </button>
+      <button class="icon-btn" id="openSettings" type="button" aria-label="Pengaturan API">
+        <i class="fa-solid fa-key"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ------------------------ MAIN ------------------------ -->
+  <main class="main">
+
+    <!-- ============================================================
+         VIEW : JADIBOT
+         ============================================================ -->
+    <section class="view active" id="view-jadibot">
+
+      <div class="segments" id="jbSegments" role="tablist">
+        <button class="seg active" data-seg="sesi" role="tab">
+          <i class="fa-solid fa-satellite-dish"></i> Sesi
+        </button>
+        <button class="seg" data-seg="kirim" role="tab">
+          <i class="fa-solid fa-paper-plane"></i> Kirim
+        </button>
+        <button class="seg" data-seg="media" role="tab">
+          <i class="fa-solid fa-photo-film"></i> Media
+        </button>
+        <button class="seg" data-seg="broadcast" role="tab">
+          <i class="fa-solid fa-tower-broadcast"></i> Broadcast
+        </button>
+        <button class="seg" data-seg="tools" role="tab">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Tools
+        </button>
+      </div>
+
+      <!-- ============ PANEL : SESI ============ -->
+      <div class="seg-panel active" id="seg-sesi">
+
+        <div class="card accent-cyan">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-list-ul"></i></div>
+              <div>
+                <h3>Sesi Terdaftar</h3>
+                <p>Daftar perangkat terhubung</p>
+              </div>
+            </div>
+            <button class="icon-btn" id="btnRefreshSessions" type="button" style="width:38px;height:38px;border-radius:13px;font-size:13px;">
+              <i class="fa-solid fa-rotate"></i>
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="session-list" id="sessionList">
+              <div class="skeleton"></div>
+              <div class="skeleton"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-magnifying-glass"></i></div>
+              <div>
+                <h3>Cek Sesi</h3>
+                <p>Detail status per nomor</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="checkPhone">
+                <i class="fa-solid fa-hashtag"></i> Nomor WhatsApp
+              </label>
+              <input class="input" id="checkPhone" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+            </div>
+            <button class="btn btn-primary" id="btnCheckSession" type="button">
+              <i class="fa-solid fa-satellite-dish"></i>
+              <span class="btn-label">Cek Sesi</span>
+            </button>
+            <div class="result" id="checkResult"></div>
+          </div>
+        </div>
+
+        <div class="card accent-pink">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-qrcode"></i></div>
+              <div>
+                <h3>QR Pairing</h3>
+                <p>Scan untuk menautkan sesi</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="qrPhone">
+                <i class="fa-solid fa-hashtag"></i> Nomor WhatsApp
+              </label>
+              <input class="input" id="qrPhone" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+            </div>
+            <button class="btn btn-pink" id="btnGetQr" type="button">
+              <i class="fa-solid fa-qrcode"></i>
+              <span class="btn-label">Ambil QR</span>
+            </button>
+            <div class="preview" id="qrPreview">
+              <img id="qrImage" alt="QR Pairing" />
+              <div class="preview-actions">
+                <button class="btn btn-ghost btn-sm" id="btnQrReload" type="button">
+                  <i class="fa-solid fa-rotate"></i> Muat Ulang
+                </button>
+              </div>
+            </div>
+            <div class="result" id="qrResult"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ PANEL : KIRIM ============ -->
+      <div class="seg-panel" id="seg-kirim">
+
+        <div class="card accent-lime">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-paper-plane"></i></div>
+              <div>
+                <h3>Kirim Pesan</h3>
+                <p>Text message ke tujuan</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="sendPhone">
+                <i class="fa-solid fa-user-astronaut"></i> Nomor Pengirim
+              </label>
+              <input class="input" id="sendPhone" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+              <div class="pill-row">
+                <button class="pill" type="button" data-fill="sendPhone" data-src="session">Pakai Sesi</button>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label" for="sendTo">
+                <i class="fa-solid fa-crosshairs"></i> Nomor Tujuan
+              </label>
+              <input class="input" id="sendTo" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="sendText">
+                <i class="fa-solid fa-comment-dots"></i> Isi Pesan
+              </label>
+              <textarea class="textarea" id="sendText" placeholder="Tulis pesan di sini..."></textarea>
+            </div>
+            <button class="btn btn-lime" id="btnSend" type="button">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span class="btn-label">Kirim Pesan</span>
+            </button>
+            <div class="result" id="sendResult"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ PANEL : MEDIA ============ -->
+      <div class="seg-panel" id="seg-media">
+
+        <div class="card accent-amber">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-photo-film"></i></div>
+              <div>
+                <h3>Kirim Media</h3>
+                <p>Gambar, video, audio, dokumen</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="mediaPhone">
+                <i class="fa-solid fa-user-astronaut"></i> Nomor Pengirim
+              </label>
+              <input class="input" id="mediaPhone" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="mediaTo">
+                <i class="fa-solid fa-crosshairs"></i> Nomor Tujuan
+              </label>
+              <input class="input" id="mediaTo" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="mediaUrl">
+                <i class="fa-solid fa-link"></i> URL Media
+              </label>
+              <input class="input" id="mediaUrl" type="url" placeholder="https://..." autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="mediaType">
+                <i class="fa-solid fa-layer-group"></i> Tipe Media
+              </label>
+              <select class="select" id="mediaType">
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+                <option value="audio">Audio</option>
+                <option value="document">Document</option>
+                <option value="sticker">Sticker</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label" for="mediaCaption">
+                <i class="fa-solid fa-quote-left"></i> Caption
+              </label>
+              <textarea class="textarea" id="mediaCaption" placeholder="Caption (opsional)" style="min-height:76px;"></textarea>
+            </div>
+            <button class="btn btn-amber" id="btnSendMedia" type="button">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span class="btn-label">Kirim Media</span>
+            </button>
+            <div class="result" id="mediaResult"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ PANEL : BROADCAST ============ -->
+      <div class="seg-panel" id="seg-broadcast">
+
+        <div class="card accent-pink">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-tower-broadcast"></i></div>
+              <div>
+                <h3>Broadcast</h3>
+                <p>Kirim massal dengan jeda</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="bcPhone">
+                <i class="fa-solid fa-user-astronaut"></i> Nomor Pengirim
+              </label>
+              <input class="input" id="bcPhone" type="tel" inputmode="numeric" placeholder="628xxxxxxxxxx" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="bcText">
+                <i class="fa-solid fa-comment-dots"></i> Isi Broadcast
+              </label>
+              <textarea class="textarea" id="bcText" placeholder="Tulis pesan broadcast..."></textarea>
+            </div>
+            <div class="field">
+              <label class="label" for="bcDelay">
+                <i class="fa-solid fa-stopwatch"></i> Delay (ms)
+              </label>
+              <input class="input" id="bcDelay" type="number" inputmode="numeric" value="1500" min="0" placeholder="1500" />
+              <div class="pill-row">
+                <button class="pill" type="button" data-delay="500">500</button>
+                <button class="pill" type="button" data-delay="1000">1000</button>
+                <button class="pill" type="button" data-delay="1500">1500</button>
+                <button class="pill" type="button" data-delay="3000">3000</button>
+                <button class="pill" type="button" data-delay="5000">5000</button>
+              </div>
+            </div>
+            <button class="btn btn-pink" id="btnBroadcast" type="button">
+              <i class="fa-solid fa-tower-broadcast"></i>
+              <span class="btn-label">Mulai Broadcast</span>
+            </button>
+            <div class="result" id="bcResult"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ PANEL : TOOLS ============ -->
+      <div class="seg-panel" id="seg-tools">
+
+        <!-- BRAT -->
+        <div class="card accent-violet">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-font"></i></div>
+              <div>
+                <h3>Brat Generator</h3>
+                <p>Text ke gambar PNG</p>
+              </div>
+            </div>
+            <span class="badge badge-ok">PNG</span>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="bratText">
+                <i class="fa-solid fa-keyboard"></i> Teks
+              </label>
+              <input class="input" id="bratText" type="text" placeholder="contoh: insomnia xd" autocomplete="off" />
+            </div>
+            <button class="btn btn-primary" id="btnBrat" type="button">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span class="btn-label">Generate Brat</span>
+            </button>
+            <div class="preview" id="bratPreview">
+              <img id="bratImage" alt="Brat Result" />
+              <div class="preview-actions">
+                <a class="btn btn-ghost btn-sm" id="bratDownload" download="brat.png">
+                  <i class="fa-solid fa-download"></i> Unduh
+                </a>
+              </div>
+            </div>
+            <div class="result" id="bratResult"></div>
+          </div>
+        </div>
+
+        <!-- BRATVID -->
+        <div class="card accent-cyan">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-film"></i></div>
+              <div>
+                <h3>Brat Video</h3>
+                <p>Text ke video MP4</p>
+              </div>
+            </div>
+            <span class="badge badge-ok">MP4</span>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="bratvidText">
+                <i class="fa-solid fa-keyboard"></i> Teks
+              </label>
+              <input class="input" id="bratvidText" type="text" placeholder="contoh: insomnia xd" autocomplete="off" />
+            </div>
+            <button class="btn btn-cyan" id="btnBratvid" type="button">
+              <i class="fa-solid fa-film"></i>
+              <span class="btn-label">Generate Video</span>
+            </button>
+            <div class="preview" id="bratvidPreview">
+              <video id="bratvidVideo" controls playsinline></video>
+              <div class="preview-actions">
+                <a class="btn btn-ghost btn-sm" id="bratvidDownload" download="bratvid.mp4">
+                  <i class="fa-solid fa-download"></i> Unduh
+                </a>
+              </div>
+            </div>
+            <div class="result" id="bratvidResult"></div>
+          </div>
+        </div>
+
+        <!-- STICKER -->
+        <div class="card accent-lime">
+          <div class="card-head">
+            <div class="card-title">
+              <div class="ico"><i class="fa-solid fa-face-laugh-squint"></i></div>
+              <div>
+                <h3>Sticker Maker</h3>
+                <p>URL gambar ke WebP</p>
+              </div>
+            </div>
+            <span class="badge badge-ok">WebP</span>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="label" for="stickerUrl">
+                <i class="fa-solid fa-link"></i> URL Gambar
+              </label>
+              <input class="input" id="stickerUrl" type="url" placeholder="https://..." autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="stickerPack">
+                <i class="fa-solid fa-box"></i> Nama Pack
+              </label>
+              <input class="input" id="stickerPack" type="text" placeholder="InsomniaXD" value="InsomniaXD" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="label" for="stickerAuthor">
+                <i class="fa-solid fa-user-pen"></i> Author
+              </label>
+              <input class="input" id="stickerAuthor" type="text" placeholder="InsomniaDev" value="InsomniaDev" autocomplete="off" />
+            </div>
+            <button class="btn btn-lime" id="btnSticker" type="button">
+              <i class="fa-solid fa-face-laugh-squint"></i>
+              <span class="btn-label">Buat Sticker</span>
+            </button>
+            <div class="preview" id="stickerPreview">
+              <img id="stickerImage" alt="Sticker Result" />
+              <div class="preview-actions">
+                <a class="btn btn-ghost btn-sm" id="stickerDownload" download="sticker.webp">
+                  <i class="fa-solid fa-download"></i> Unduh
+                </a>
+              </div>
+            </div>
+            <div class="result" id="stickerResult"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+         VIEW : GLOBAL
+         ============================================================ -->
+    <section class="view" id="view-global">
+      <div class="soon-wrap">
+        <div class="soon-orb"><i class="fa-solid fa-globe"></i></div>
+        <h2>Global Panel</h2>
+        <p>Panel kontrol global untuk seluruh node sedang disiapkan. Semua endpoint publik akan dikonsolidasikan di sini.</p>
+        <div class="soon-tag"><i class="fa-solid fa-gear"></i> Coming Soon</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         VIEW : ROLE
+         ============================================================ -->
+    <section class="view" id="view-role">
+      <div class="soon-wrap">
+        <div class="soon-orb"><i class="fa-solid fa-user-shield"></i></div>
+        <h2>Role Manager</h2>
+        <p>Pengaturan role, permission, dan akses pengguna akan tersedia di modul ini.</p>
+        <div class="soon-tag"><i class="fa-solid fa-gear"></i> Coming Soon</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         VIEW : GLOBAL (2)
+         ============================================================ -->
+    <section class="view" id="view-global2">
+      <div class="soon-wrap">
+        <div class="soon-orb"><i class="fa-solid fa-layer-group"></i></div>
+        <h2>Global Nodes</h2>
+        <p>Monitoring node global, health check, dan statistik realtime akan hadir di sini.</p>
+        <div class="soon-tag"><i class="fa-solid fa-gear"></i> Coming Soon</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ------------------------ TOOLBAR ------------------------ -->
+  <nav class="toolbar" role="tablist">
+    <button class="tool active" data-view="jadibot" role="tab">
+      <i class="fa-solid fa-robot"></i>
+      <span>Jadibot</span>
+    </button>
+    <button class="tool" data-view="global" role="tab">
+      <i class="fa-solid fa-globe"></i>
+      <span>Global</span>
+      <span class="soon-dot"></span>
+    </button>
+    <button class="tool" data-view="role" role="tab">
+      <i class="fa-solid fa-user-shield"></i>
+      <span>Role</span>
+      <span class="soon-dot"></span>
+    </button>
+    <button class="tool" data-view="global2" role="tab">
+      <i class="fa-solid fa-layer-group"></i>
+      <span>Global</span>
+      <span class="soon-dot"></span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ============================ TOAST ============================ -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ============================ SHEET BACKDROP ============================ -->
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+
+<!-- ============================ SETTINGS SHEET ============================ -->
+<div class="sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-label="Pengaturan API">
+  <div class="sheet-grip"></div>
+
+  <div class="sheet-head">
+    <h3>Konfigurasi API</h3>
+    <button class="icon-btn" id="closeSettings" type="button" aria-label="Tutup">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="sheet-section">
+    <label class="label" for="cfgBase">
+      <i class="fa-solid fa-server"></i> Base URL
+    </label>
+    <input class="input" id="cfgBase" type="url" spellcheck="false" autocomplete="off" />
+    <div class="hint">Endpoint root node. Tanpa trailing slash.</div>
+  </div>
+
+  <div class="sheet-section">
+    <label class="label" for="cfgKey">
+      <i class="fa-solid fa-key"></i> API Key
+    </label>
+    <div class="input-group">
+      <input class="input" id="cfgKey" type="password" spellcheck="false" autocomplete="off" />
+      <button class="eye" id="toggleKey" type="button" aria-label="Tampilkan key">
+        <i class="fa-solid fa-eye"></i>
+      </button>
+    </div>
+    <div class="hint">Key dikirim lewat header <code>x-api-key</code> pada setiap request.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sheet-section">
+    <label class="label">
+      <i class="fa-solid fa-heart-pulse"></i> Server
+    </label>
+    <button class="btn btn-ghost btn-sm" id="btnTestConn" type="button" style="width:100%;">
+      <i class="fa-solid fa-plug-circle-check"></i> Tes Koneksi
+    </button>
+    <div class="result" id="testResult"></div>
+  </div>
+
+  <div class="sheet-actions">
+    <button class="btn btn-ghost" id="btnResetCfg" type="button">
+      <i class="fa-solid fa-rotate-left"></i> Reset
+    </button>
+    <button class="btn btn-primary" id="btnSaveCfg" type="button">
+      <i class="fa-solid fa-floppy-disk"></i> Simpan
+    </button>
+  </div>
+
+  <div class="hint" style="text-align:center;margin-top:16px;">
+    INSOMNIAXD · Jadibot Control Deck
+  </div>
+</div>
+
+<!-- ============================ SCRIPT ============================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     KONFIGURASI DASAR
+     ============================================================ */
+  const DEFAULT_BASE = 'http://lunaris-node-free-8.hostkita.help:20016';
+  const DEFAULT_KEY  = 'jadibot-insomniaxd-2024-secret';
+
+  const LS_BASE = 'insomniaxd.base';
+  const LS_KEY  = 'insomniaxd.key';
+
+  let BASE_URL = localStorage.getItem(LS_BASE) || DEFAULT_BASE;
+  let API_KEY  = localStorage.getItem(LS_KEY)  || DEFAULT_KEY;
+
+  /* ============================================================
+     HELPERS
+     ============================================================ */
+  const $  = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function el(tag, cls, html) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html !== undefined) n.innerHTML = html;
+    return n;
+  }
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function prettyJson(obj) {
+    try {
+      return JSON.stringify(obj, null, 2);
+    } catch (e) {
+      return String(obj);
+    }
+  }
+
+  /* ============================================================
+     TOAST
+     ============================================================ */
+  const toastStack = $('#toastStack');
+
+  function toast(msg, type = 'info') {
+    const icons = {
+      ok:   'fa-circle-check',
+      err:  'fa-circle-exclamation',
+      info: 'fa-circle-info'
+    };
+    const node = el('div', 'toast ' + type,
+      '<i class="fa-solid ' + (icons[type] || icons.info) + '"></i>' +
+      '<span>' + escapeHtml(msg) + '</span>'
+    );
+    toastStack.appendChild(node);
+
+    setTimeout(() => {
+      node.classList.add('out');
+      setTimeout(() => node.remove(), 320);
+    }, 2600);
+  }
+
+  /* ============================================================
+     BUTTON LOADING STATE
+     ============================================================ */
+  function setLoading(btn, state) {
+    if (!btn) return;
+    if (state) {
+      btn.classList.add('btn-loading');
+      btn.disabled = true;
+    } else {
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+    }
+  }
+
+  /* ============================================================
+     RESULT BOX
+     ============================================================ */
+  function showResult(node, content, kind) {
+    if (!node) return;
+    node.classList.remove('is-ok', 'is-err');
+    if (kind === 'ok') node.classList.add('is-ok');
+    if (kind === 'err') node.classList.add('is-err');
+    node.textContent = typeof content === 'string' ? content : prettyJson(content);
+    node.classList.add('show');
+  }
+
+  function hideResult(node) {
+    if (!node) return;
+    node.classList.remove('show', 'is-ok', 'is-err');
+    node.textContent = '';
+  }
+
+  function showPreview(node) { if (node) node.classList.add('show'); }
+  function hidePreview(node) { if (node) node.classList.remove('show'); }
+
+  /* ============================================================
+     API LAYER
+     ============================================================ */
+  function authHeaders(extra) {
+    const h = {
+      'x-api-key': API_KEY,
+      'apikey': API_KEY,
+      'Authorization': 'Bearer ' + API_KEY
+    };
+    return Object.assign(h, extra || {});
+  }
+
+  function buildUrl(path) {
+    const base = BASE_URL.replace(/\/+$/, '');
+    const p = path.startsWith('/') ? path : '/' + path;
+    return base + p;
+  }
+
+  async function apiRequest(path, options) {
+    const opts = options || {};
+    const url = buildUrl(path);
+
+    const init = {
+      method: opts.method || 'GET',
+      headers: authHeaders(opts.body ? { 'Content-Type': 'application/json' } : {}),
+      mode: 'cors',
+      cache: 'no-store'
+    };
+
+    if (opts.body) {
+      init.body = JSON.stringify(opts.body);
+    }
+
+    let res;
+    try {
+      res = await fetch(url, init);
+    } catch (netErr) {
+      throw new Error('NETWORK: ' + (netErr && netErr.message ? netErr.message : 'gagal terhubung'));
+    }
+
+    const raw = await res.text();
+    let parsed = null;
+
+    if (raw) {
+      try { parsed = JSON.parse(raw); }
+      catch (e) { parsed = raw; }
+    }
+
+    if (!res.ok) {
+      const msg = (parsed && typeof parsed === 'object' && (parsed.message || parsed.error || parsed.msg))
+        ? (parsed.message || parsed.error || parsed.msg)
+        : ('HTTP ' + res.status);
+      const err = new Error(msg);
+      err.status = res.status;
+      err.payload = parsed;
+      throw err;
+    }
+
+    return parsed;
+  }
+
+  async function apiRequestBinary(path, options) {
+    const opts = options || {};
+    const url = buildUrl(path);
+
+    const init = {
+      method: opts.method || 'GET',
+      headers: authHeaders(opts.body ? { 'Content-Type': 'application/json' } : {}),
+      mode: 'cors',
+      cache: 'no-store'
+    };
+
+    if (opts.body) {
+      init.body = JSON.stringify(opts.body);
+    }
+
+    let res;
+    try {
+      res = await fetch(url, init);
+    } catch (netErr) {
+      throw new Error('NETWORK: ' + (netErr && netErr.message ? netErr.message : 'gagal terhubung'));
+    }
+
+    const ct = (res.headers.get('content-type') || '').toLowerCase();
+
+    if (!res.ok) {
+      let msg = 'HTTP ' + res.status;
+      try {
+        const t = await res.text();
+        try {
+          const j = JSON.parse(t);
+          msg = j.message || j.error || j.msg || msg;
+        } catch (e) {
+          if (t) msg = t.slice(0, 240);
+        }
+      } catch (e) { /* ignore */ }
+      throw new Error(msg);
+    }
+
+    if (ct.includes('application/json') || ct.includes('text/')) {
+      const text = await res.text();
+      let parsed = null;
+      try { parsed = JSON.parse(text); } catch (e) { parsed = text; }
+      return { type: 'json', data: parsed, contentType: ct };
+    }
+
+    const blob = await res.blob();
+    return { type: 'blob', blob: blob, contentType: ct };
+  }
+
+  /* ============================================================
+     HEALTH CHECK
+     ============================================================ */
+  const healthPill = $('#healthPill');
+  const healthText = $('#healthText');
+
+  async function checkHealth(silent) {
+    if (!silent) {
+      healthPill.classList.remove('is-online', 'is-offline');
+      healthText.textContent = 'CHECK';
+    }
+    try {
+      const data = await apiRequest('/api/public/health');
+      healthPill.classList.remove('is-offline');
+      healthPill.classList.add('is-online');
+      healthText.textContent = 'ONLINE';
+      return { ok: true, data: data };
+    } catch (err) {
+      healthPill.classList.remove('is-online');
+      healthPill.classList.add('is-offline');
+      healthText.textContent = 'OFFLINE';
+      return { ok: false, error: err };
+    }
+  }
+
+  healthPill.addEventListener('click', async () => {
+    const res = await checkHealth();
+    if (res.ok) toast('Server online', 'ok');
+    else toast('Server tidak merespon', 'err');
+  });
+
+  /* ============================================================
+     NAVIGASI VIEW (TOOLBAR)
+     ============================================================ */
+  const tools = $$('.tool');
+  const views = $$('.view');
+
+  tools.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-view');
+
+      tools.forEach((t) => t.classList.toggle('active', t === btn));
+      views.forEach((v) => v.classList.toggle('active', v.id === 'view-' + target));
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (target !== 'jadibot') {
+        const name = btn.querySelector('span').textContent.trim();
+        toast('Modul ' + name + ' segera hadir', 'info');
+      }
+    });
+  });
+
+  /* ============================================================
+     NAVIGASI SEGMEN (DALAM JADIBOT)
+     ============================================================ */
+  const segBtns = $$('.seg');
+  const segPanels = $$('.seg-panel');
+
+  segBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-seg');
+      segBtns.forEach((b) => b.classList.toggle('active', b === btn));
+      segPanels.forEach((p) => p.classList.toggle('active', p.id === 'seg-' + target));
+    });
+  });
+
+  /* ============================================================
+     SESSION LIST
+     ============================================================ */
+  const sessionListEl = $('#sessionList');
+  const btnRefreshSessions = $('#btnRefreshSessions');
+
+  function normalizeSessions(payload) {
+    if (!payload) return [];
+
+    if (Array.isArray(payload)) {
+      return payload.map((item) => {
+        if (typeof item === 'string' || typeof item === 'number') {
+          return { phone: String(item) };
+        }
+        if (item && typeof item === 'object') return item;
+        return { phone: String(item) };
+      });
+    }
+
+    if (typeof payload !== 'object') return [];
+
+    const candidates = [
+      payload.sessions,
+      payload.data,
+      payload.list,
+      payload.result,
+      payload.items
+    ];
+
+    for (const cand of candidates) {
+      if (Array.isArray(cand)) {
+        return cand.map((item) => {
+          if (typeof item === 'string' || typeof item === 'number') {
+            return { phone: String(item) };
+          }
+          return item || {};
+        });
+      }
+      if (cand && typeof cand === 'object') {
+        return Object.keys(cand).map((key) => {
+          const val = cand[key];
+          if (val && typeof val === 'object') {
+            return Object.assign({ phone: key }, val);
+          }
+          return { phone: key, value: val };
+        });
+      }
+    }
+
+    return Object.keys(payload).map((key) => {
+      const val = payload[key];
+      if (val && typeof val === 'object') {
+        return Object.assign({ phone: key }, val);
+      }
+      return { phone: key, value: val };
+    });
+  }
+
+  function pickSessionPhone(item) {
+    return (
+      item.phone ||
+      item.number ||
+      item.jid ||
+      item.id ||
+      item.msisdn ||
+      item.user ||
+      item.key ||
+      'unknown'
+    );
+  }
+
+  function pickSessionStatus(item) {
+    const raw =
+      item.status ||
+      item.state ||
+      item.connection ||
+      item.connected ||
+      item.ready ||
+      item.active;
+
+    if (raw === undefined || raw === null) return { label: 'AKTIF', cls: 'badge-ok' };
+
+    if (typeof raw === 'boolean') {
+      return raw
+        ? { label: 'AKTIF', cls: 'badge-ok' }
+        : { label: 'OFF', cls: 'badge-off' };
+    }
+
+    const s = String(raw).toLowerCase();
+    if (['open', 'connected', 'online', 'ready', 'active', 'true', 'ok'].includes(s)) {
+      return { label: 'AKTIF', cls: 'badge-ok' };
+    }
+    if (['connecting', 'pairing', 'pending', 'wait'].includes(s)) {
+      return { label: 'PENDING', cls: 'badge-warn' };
+    }
+    return { label: String(raw).toUpperCase().slice(0, 10), cls: 'badge-off' };
+  }
+
+  function renderSessions(items) {
+    sessionListEl.innerHTML = '';
+
+    if (!items.length) {
+      sessionListEl.appendChild(
+        el('div', 'empty',
+          '<i class="fa-solid fa-satellite-dish"></i>' +
+          '<p>Belum ada sesi terdaftar</p>' +
+          '<small>Tautkan nomor lewat QR Pairing</small>'
+        )
+      );
+      return;
+    }
+
+    items.forEach((item) => {
+      const phone = String(pickSessionPhone(item));
+      const status = pickSessionStatus(item);
+
+      const node = el('div', 'session-item',
+        '<div class="session-avatar"><i class="fa-brands fa-whatsapp"></i></div>' +
+        '<div class="session-info">' +
+          '<div class="session-phone">' + escapeHtml(phone) + '</div>' +
+          '<div class="session-meta">Ketuk untuk isi otomatis</div>' +
+        '</div>' +
+        '<span class="badge ' + status.cls + '">' + escapeHtml(status.label) + '</span>'
+      );
+
+      node.addEventListener('click', () => {
+        $('#checkPhone').value = phone;
+        $('#sendPhone').value = phone;
+        $('#mediaPhone').value = phone;
+        $('#bcPhone').value = phone;
+        $('#qrPhone').value = phone;
+        toast('Nomor ' + phone + ' dipakai', 'ok');
+      });
+
+      sessionListEl.appendChild(node);
+    });
+  }
+
+  async function loadSessions(silent) {
+    if (!silent) {
+      sessionListEl.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+    }
+    try {
+      const data = await apiRequest('/api/public/sessions');
+      const items = normalizeSessions(data);
+      renderSessions(items);
+      return items;
+    } catch (err) {
+      sessionListEl.innerHTML = '';
+      sessionListEl.appendChild(
+        el('div', 'empty',
+          '<i class="fa-solid fa-triangle-exclamation"></i>' +
+          '<p>Gagal memuat sesi</p>' +
+          '<small>' + escapeHtml(err.message || 'unknown error') + '</small>'
+        )
+      );
+      return [];
+    }
+  }
+
+  btnRefreshSessions.addEventListener('click', async () => {
+    setLoading(btnRefreshSessions, true);
+    await loadSessions();
+    setLoading(btnRefreshSessions, false);
+    toast('Daftar sesi diperbarui', 'ok');
+  });
+
+  /* ============================================================
+     CEK SESI
+     ============================================================ */
+  const btnCheckSession = $('#btnCheckSession');
+  const checkPhone = $('#checkPhone');
+  const checkResult = $('#checkResult');
+
+  btnCheckSession.addEventListener('click', async () => {
+    const phone = checkPhone.value.trim();
+    hideResult(checkResult);
+
+    if (!phone) {
+      toast('Nomor wajib diisi', 'err');
+      checkPhone.focus();
+      return;
+    }
+
+    setLoading(btnCheckSession, true);
+    try {
+      const data = await apiRequest('/api/public/session/' + encodeURIComponent(phone));
+      showResult(checkResult, prettyJson(data), 'ok');
+      toast('Sesi ditemukan', 'ok');
+    } catch (err) {
+      showResult(checkResult, err.message || 'Gagal cek sesi', 'err');
+      toast('Sesi tidak ditemukan', 'err');
+    } finally {
+      setLoading(btnCheckSession, false);
+    }
+  });
+
+  /* ============================================================
+     QR PAIRING
+     ============================================================ */
+  const btnGetQr = $('#btnGetQr');
+  const qrPhone = $('#qrPhone');
+  const qrResult = $('#qrResult');
+  const qrPreview = $('#qrPreview');
+  const qrImage = $('#qrImage');
+  const btnQrReload = $('#btnQrReload');
+  let currentQrUrl = null;
+
+  function releaseQrUrl() {
+    if (currentQrUrl) {
+      URL.revokeObjectURL(currentQrUrl);
+      currentQrUrl = null;
+    }
+  }
+
+  async function fetchQr() {
+    const phone = qrPhone.value.trim();
+    hideResult(qrResult);
+    hidePreview(qrPreview);
+
+    if (!phone) {
+      toast('Nomor wajib diisi', 'err');
+      qrPhone.focus();
+      return;
+    }
+
+    setLoading(btnGetQr, true);
+
+    try {
+      const res = await apiRequestBinary('/api/public/qr/' + encodeURIComponent(phone));
+
+      if (res.type === 'blob') {
+        releaseQrUrl();
+        currentQrUrl = URL.createObjectURL(res.blob);
+        qrImage.src = currentQrUrl;
+        showPreview(qrPreview);
+        toast('QR berhasil dimuat', 'ok');
+      } else {
+        const d = res.data;
+
+        if (typeof d === 'string' && d.startsWith('data:image')) {
+          qrImage.src = d;
+          showPreview(qrPreview);
+          toast('QR berhasil dimuat', 'ok');
+        } else if (d && typeof d === 'object') {
+          const candidate =
+            d.qr ||
+            d.qrCode ||
+            d.qrcode ||
+            d.image ||
+            d.url ||
+            d.dataUrl ||
+            d.base64;
+
+          if (typeof candidate === 'string') {
+            if (candidate.startsWith('data:') || candidate.startsWith('http')) {
+              qrImage.src = candidate;
+              showPreview(qrPreview);
+              toast('QR berhasil dimuat', 'ok');
+            } else {
+              qrImage.src = 'data:image/png;base64,' + candidate;
+              showPreview(qrPreview);
+              toast('QR berhasil dimuat', 'ok');
+            }
+          } else {
+            showResult(qrResult, prettyJson(d), 'ok');
+            toast('Respon QR diterima', 'info');
+          }
+        } else {
+          showResult(qrResult, String(d), 'ok');
+          toast('Respon QR diterima', 'info');
+        }
+      }
+    } catch (err) {
+      showResult(qrResult, err.message || 'Gagal ambil QR', 'err');
+      toast('Gagal ambil QR', 'err');
+    } finally {
+      setLoading(btnGetQr, false);
+    }
+  }
+
+  btnGetQr.addEventListener('click', fetchQr);
+  btnQrReload.addEventListener('click', fetchQr);
+
+  /* ============================================================
+     KIRIM PESAN
+     ============================================================ */
+  const btnSend = $('#btnSend');
+  const sendPhone = $('#sendPhone');
+  const sendTo = $('#sendTo');
+  const sendText = $('#sendText');
+  const sendResult = $('#sendResult');
+
+  btnSend.addEventListener('click', async () => {
+    const phone = sendPhone.value.trim();
+    const to = sendTo.value.trim();
+    const text = sendText.value.trim();
+
+    hideResult(sendResult);
+
+    if (!phone || !to || !text) {
+      toast('Semua field wajib diisi', 'err');
+      return;
+    }
+
+    setLoading(btnSend, true);
+    try {
+      const data = await apiRequest('/api/public/send', {
+        method: 'POST',
+        body: { phone: phone, to: to, text: text }
+      });
+      showResult(sendResult, prettyJson(data), 'ok');
+      toast('Pesan terkirim', 'ok');
+    } catch (err) {
+      showResult(sendResult, err.message || 'Gagal kirim pesan', 'err');
+      toast('Gagal kirim pesan', 'err');
+    } finally {
+      setLoading(btnSend, false);
+    }
+  });
+
+  /* ============================================================
+     KIRIM MEDIA
+     ============================================================ */
+  const btnSendMedia = $('#btnSendMedia');
+  const mediaPhone = $('#mediaPhone');
+  const mediaTo = $('#mediaTo');
+  const mediaUrl = $('#mediaUrl');
+  const mediaType = $('#mediaType');
+  const mediaCaption = $('#mediaCaption');
+  const mediaResult = $('#mediaResult');
+
+  btnSendMedia.addEventListener('click', async () => {
+    const phone = mediaPhone.value.trim();
+    const to = mediaTo.value.trim();
+    const url = mediaUrl.value.trim();
+    const type = mediaType.value;
+    const caption = mediaCaption.value.trim();
+
+    hideResult(mediaResult);
+
+    if (!phone || !to || !url) {
+      toast('Nomor dan URL wajib diisi', 'err');
+      return;
+    }
+
+    setLoading(btnSendMedia, true);
+    try {
+      const body = { phone: phone, to: to, url: url, type: type };
+      if (caption) body.caption = caption;
+
+      const data = await apiRequest('/api/public/send-media', {
+        method: 'POST',
+        body: body
+      });
+      showResult(mediaResult, prettyJson(data), 'ok');
+      toast('Media terkirim', 'ok');
+    } catch (err) {
+      showResult(mediaResult, err.message || 'Gagal kirim media', 'err');
+      toast('Gagal kirim media', 'err');
+    } finally {
+      setLoading(btnSendMedia, false);
+    }
+  });
+
+  /* ============================================================
+     BROADCAST
+     ============================================================ */
+  const btnBroadcast = $('#btnBroadcast');
+  const bcPhone = $('#bcPhone');
+  const bcText = $('#bcText');
+  const bcDelay = $('#bcDelay');
+  const bcResult = $('#bcResult');
+
+  $$('[data-delay]').forEach((p) => {
+    p.addEventListener('click', () => {
+      bcDelay.value = p.getAttribute('data-delay');
+    });
+  });
+
+  btnBroadcast.addEventListener('click', async () => {
+    const phone = bcPhone.value.trim();
+    const text = bcText.value.trim();
+    const delayMs = parseInt(bcDelay.value, 10);
+
+    hideResult(bcResult);
+
+    if (!phone || !text) {
+      toast('Nomor dan pesan wajib diisi', 'err');
+      return;
+    }
+    if (isNaN(delayMs) || delayMs < 0) {
+      toast('Delay tidak valid', 'err');
+      return;
+    }
+
+    setLoading(btnBroadcast, true);
+    try {
+      const data = await apiRequest('/api/public/broadcast', {
+        method: 'POST',
+        body: { phone: phone, text: text, delayMs: delayMs }
+      });
+      showResult(bcResult, prettyJson(data), 'ok');
+      toast('Broadcast dimulai', 'ok');
+    } catch (err) {
+      showResult(bcResult, err.message || 'Gagal broadcast', 'err');
+      toast('Broadcast gagal', 'err');
+    } finally {
+      setLoading(btnBroadcast, false);
+    }
+  });
+
+  /* ============================================================
+     TOOLS : BRAT
+     ============================================================ */
+  const btnBrat = $('#btnBrat');
+  const bratText = $('#bratText');
+  const bratResult = $('#bratResult');
+  const bratPreview = $('#bratPreview');
+  const bratImage = $('#bratImage');
+  const bratDownload = $('#bratDownload');
+  let bratBlobUrl = null;
+
+  btnBrat.addEventListener('click', async () => {
+    const text = bratText.value.trim();
+    hideResult(bratResult);
+    hidePreview(bratPreview);
+
+    if (!text) {
+      toast('Teks wajib diisi', 'err');
+      bratText.focus();
+      return;
+    }
+
+    setLoading(btnBrat, true);
+    try {
+      const res = await apiRequestBinary('/api/public/brat', {
+        method: 'POST',
+        body: { text: text }
+      });
+
+      if (res.type === 'blob') {
+        if (bratBlobUrl) URL.revokeObjectURL(bratBlobUrl);
+        bratBlobUrl = URL.createObjectURL(res.blob);
+        bratImage.src = bratBlobUrl;
+        bratDownload.href = bratBlobUrl;
+        showPreview(bratPreview);
+        toast('Brat berhasil dibuat', 'ok');
+      } else {
+        const d = res.data;
+        if (typeof d === 'string' && d.startsWith('data:image')) {
+          bratImage.src = d;
+          bratDownload.href = d;
+          showPreview(bratPreview);
+          toast('Brat berhasil dibuat', 'ok');
+        } else if (d && typeof d === 'object' && (d.url || d.image || d.data)) {
+          const src = d.url || d.image || d.data;
+          bratImage.src = src;
+          bratDownload.href = src;
+          showPreview(bratPreview);
+          toast('Brat berhasil dibuat', 'ok');
+        } else {
+          showResult(bratResult, prettyJson(d), 'ok');
+          toast('Respon diterima', 'info');
+        }
+      }
+    } catch (err) {
+      showResult(bratResult, err.message || 'Gagal buat brat', 'err');
+      toast('Gagal buat brat', 'err');
+    } finally {
+      setLoading(btnBrat, false);
+    }
+  });
+
+  /* ============================================================
+     TOOLS : BRATVID
+     ============================================================ */
+  const btnBratvid = $('#btnBratvid');
+  const bratvidText = $('#bratvidText');
+  const bratvidResult = $('#bratvidResult');
+  const bratvidPreview = $('#bratvidPreview');
+  const bratvidVideo = $('#bratvidVideo');
+  const bratvidDownload = $('#bratvidDownload');
+  let bratvidBlobUrl = null;
+
+  btnBratvid.addEventListener('click', async () => {
+    const text = bratvidText.value.trim();
+    hideResult(bratvidResult);
+    hidePreview(bratvidPreview);
+
+    if (!text) {
+      toast('Teks wajib diisi', 'err');
+      bratvidText.focus();
+      return;
+    }
+
+    setLoading(btnBratvid, true);
+    try {
+      const res = await apiRequestBinary('/api/public/bratvid', {
+        method: 'POST',
+        body: { text: text }
+      });
+
+      if (res.type === 'blob') {
+        if (bratvidBlobUrl) URL.revokeObjectURL(bratvidBlobUrl);
+        bratvidBlobUrl = URL.createObjectURL(res.blob);
+        bratvidVideo.src = bratvidBlobUrl;
+        bratvidDownload.href = bratvidBlobUrl;
+        showPreview(bratvidPreview);
+        toast('Video berhasil dibuat', 'ok');
+      } else {
+        const d = res.data;
+        if (typeof d === 'string' && (d.startsWith('data:video') || d.startsWith('http'))) {
+          bratvidVideo.src = d;
+          bratvidDownload.href = d;
+          showPreview(bratvidPreview);
+          toast('Video berhasil dibuat', 'ok');
+        } else if (d && typeof d === 'object' && (d.url || d.video || d.data)) {
+          const src = d.url || d.video || d.data;
+          bratvidVideo.src = src;
+          bratvidDownload.href = src;
+          showPreview(bratvidPreview);
+          toast('Video berhasil dibuat', 'ok');
+        } else {
+          showResult(bratvidResult, prettyJson(d), 'ok');
+          toast('Respon diterima', 'info');
+        }
+      }
+    } catch (err) {
+      showResult(bratvidResult, err.message || 'Gagal buat video', 'err');
+      toast('Gagal buat video', 'err');
+    } finally {
+      setLoading(btnBratvid, false);
+    }
+  });
+
+  /* ============================================================
+     TOOLS : STICKER
+     ============================================================ */
+  const btnSticker = $('#btnSticker');
+  const stickerUrl = $('#stickerUrl');
+  const stickerPack = $('#stickerPack');
+  const stickerAuthor = $('#stickerAuthor');
+  const stickerResult = $('#stickerResult');
+  const stickerPreview = $('#stickerPreview');
+  const stickerImage = $('#stickerImage');
+  const stickerDownload = $('#stickerDownload');
+  let stickerBlobUrl = null;
+
+  btnSticker.addEventListener('click', async () => {
+    const url = stickerUrl.value.trim();
+    const pack = stickerPack.value.trim() || 'InsomniaXD';
+    const author = stickerAuthor.value.trim() || 'InsomniaDev';
+
+    hideResult(stickerResult);
+    hidePreview(stickerPreview);
+
+    if (!url) {
+      toast('URL gambar wajib diisi', 'err');
+      stickerUrl.focus();
+      return;
+    }
+
+    setLoading(btnSticker, true);
+    try {
+      const res = await apiRequestBinary('/api/public/sticker', {
+        method: 'POST',
+        body: { url: url, pack: pack, author: author }
+      });
+
+      if (res.type === 'blob') {
+        if (stickerBlobUrl) URL.revokeObjectURL(stickerBlobUrl);
+        stickerBlobUrl = URL.createObjectURL(res.blob);
+        stickerImage.src = stickerBlobUrl;
+        stickerDownload.href = stickerBlobUrl;
+        showPreview(stickerPreview);
+        toast('Sticker berhasil dibuat', 'ok');
+      } else {
+        const d = res.data;
+        if (typeof d === 'string' && (d.startsWith('data:image') || d.startsWith('http'))) {
+          stickerImage.src = d;
+          stickerDownload.href = d;
+          showPreview(stickerPreview);
+          toast('Sticker berhasil dibuat', 'ok');
+        } else if (d && typeof d === 'object' && (d.url || d.image || d.data)) {
+          const src = d.url || d.image || d.data;
+          stickerImage.src = src;
+          stickerDownload.href = src;
+          showPreview(stickerPreview);
+          toast('Sticker berhasil dibuat', 'ok');
+        } else {
+          showResult(stickerResult, prettyJson(d), 'ok');
+          toast('Respon diterima', 'info');
+        }
+      }
+    } catch (err) {
+      showResult(stickerResult, err.message || 'Gagal buat sticker', 'err');
+      toast('Gagal buat sticker', 'err');
+    } finally {
+      setLoading(btnSticker, false);
+    }
+  });
+
+  /* ============================================================
+     QUICK FILL PILLS
+     ============================================================ */
+  $$('[data-fill]').forEach((p) => {
+    p.addEventListener('click', async () => {
+      const targetId = p.getAttribute('data-fill');
+      const src = p.getAttribute('data-src');
+      const target = $('#' + targetId);
+      if (!target) return;
+
+      if (src === 'session') {
+        const items = await loadSessions(true);
+        if (!items.length) {
+          toast('Tidak ada sesi tersedia', 'err');
+          return;
+        }
+        const phone = String(pickSessionPhone(items[0]));
+        target.value = phone;
+        toast('Nomor ' + phone + ' dipakai', 'ok');
+      }
+    });
+  });
+
+  /* ============================================================
+     SETTINGS SHEET
+     ============================================================ */
+  const settingsSheet = $('#settingsSheet');
+  const sheetBackdrop = $('#sheetBackdrop');
+  const openSettingsBtn = $('#openSettings');
+  const closeSettingsBtn = $('#closeSettings');
+  const cfgBase = $('#cfgBase');
+  const cfgKey = $('#cfgKey');
+  const toggleKeyBtn = $('#toggleKey');
+  const btnSaveCfg = $('#btnSaveCfg');
+  const btnResetCfg = $('#btnResetCfg');
+  const btnTestConn = $('#btnTestConn');
+  const testResult = $('#testResult');
+
+  function openSheet() {
+    cfgBase.value = BASE_URL;
+    cfgKey.value = API_KEY;
+    cfgKey.type = 'password';
+    toggleKeyBtn.querySelector('i').className = 'fa-solid fa-eye';
+    hideResult(testResult);
+    settingsSheet.classList.add('open');
+    sheetBackdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSheet() {
+    settingsSheet.classList.remove('open');
+    sheetBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  openSettingsBtn.addEventListener('click', openSheet);
+  closeSettingsBtn.addEventListener('click', closeSheet);
+  sheetBackdrop.addEventListener('click', closeSheet);
+
+  toggleKeyBtn.addEventListener('click', () => {
+    const isPass = cfgKey.type === 'password';
+    cfgKey.type = isPass ? 'text' : 'password';
+    toggleKeyBtn.querySelector('i').className = isPass
+      ? 'fa-solid fa-eye-slash'
+      : 'fa-solid fa-eye';
+  });
+
+  btnSaveCfg.addEventListener('click', () => {
+    const newBase = cfgBase.value.trim().replace(/\/+$/, '');
+    const newKey = cfgKey.value.trim();
+
+    if (!newBase || !newKey) {
+      toast('Base URL dan API Key wajib diisi', 'err');
+      return;
+    }
+
+    BASE_URL = newBase;
+    API_KEY = newKey;
+
+    localStorage.setItem(LS_BASE, BASE_URL);
+    localStorage.setItem(LS_KEY, API_KEY);
+
+    toast('Konfigurasi tersimpan', 'ok');
+    closeSheet();
+    checkHealth();
+    loadSessions(true);
+  });
+
+  btnResetCfg.addEventListener('click', () => {
+    BASE_URL = DEFAULT_BASE;
+    API_KEY = DEFAULT_KEY;
+    localStorage.setItem(LS_BASE, BASE_URL);
+    localStorage.setItem(LS_KEY, API_KEY);
+    cfgBase.value = BASE_URL;
+    cfgKey.value = API_KEY;
+    toast('Konfigurasi direset', 'info');
+    checkHealth();
+  });
+
+  btnTestConn.addEventListener('click', async () => {
+    hideResult(testResult);
+    setLoading(btnTestConn, true);
+
+    const tmpBase = cfgBase.value.trim().replace(/\/+$/, '') || BASE_URL;
+    const tmpKey = cfgKey.value.trim() || API_KEY;
+
+    try {
+      const res = await fetch(tmpBase + '/api/public/health', {
+        method: 'GET',
+        headers: {
+          'x-api-key': tmpKey,
+          'apikey': tmpKey,
+          'Authorization': 'Bearer ' + tmpKey
+        },
+        mode: 'cors',
+        cache: 'no-store'
+      });
+
+      const text = await res.text();
+      let parsed = null;
+      try { parsed = JSON.parse(text); } catch (e) { parsed = text; }
+
+      if (res.ok) {
+        showResult(testResult, prettyJson(parsed || { status: 'OK' }), 'ok');
+        toast('Koneksi berhasil', 'ok');
+      } else {
+        showResult(testResult, 'HTTP ' + res.status + '\n' + (text || ''), 'err');
+        toast('Koneksi gagal', 'err');
+      }
+    } catch (err) {
+      showResult(testResult, err.message || 'Gagal terhubung', 'err');
+      toast('Koneksi gagal', 'err');
+    } finally {
+      setLoading(btnTestConn, false);
+    }
+  });
+
+  /* ============================================================
+     INPUT SANITIZE (NUMERIC ONLY)
+     ============================================================ */
+  $$('input[type="tel"]').forEach((inp) => {
+    inp.addEventListener('input', () => {
+      inp.value = inp.value.replace(/[^\d+]/g, '');
+    });
+  });
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  async function init() {
+    const health = await checkHealth(true);
+
+    if (health.ok) {
+      toast('Terhubung ke node', 'ok');
+    } else {
+      toast('Node tidak merespon', 'err');
+    }
+
+    await loadSessions(true);
+
+    // Prefill default dari sesi pertama bila ada
+    const items = normalizeSessions(
+      await apiRequest('/api/public/sessions').catch(() => null)
+    );
+
+    if (items.length) {
+      const first = String(pickSessionPhone(items[0]));
+      $('#sendPhone').value = first;
+      $('#mediaPhone').value = first;
+      $('#bcPhone').value = first;
+      $('#checkPhone').value = first;
+      $('#qrPhone').value = first;
+    }
+
+    // Health polling ringan
+    setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        checkHealth(true);
+      }
+    }, 60000);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState !== 'loading') init();
+
+})();
+</script>
+
+</body>
+</html>
